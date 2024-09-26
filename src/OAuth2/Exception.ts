@@ -1,6 +1,11 @@
 
 
 export class Exception  {
+
+    public static readonly USER_OAUTH2_BAD_REQUEST           = 'user_oauth2_bad_request';
+    public static readonly USER_OAUTH2_UNAUTHORIZED          = 'user_oauth2_unauthorized';
+    public static readonly USER_OAUTH2_PROVIDER_ERROR        = 'user_oauth2_provider_error';
+
     protected response: string = '';
     protected error: string = '';
     protected errorDescription: string = '';
@@ -29,11 +34,11 @@ export class Exception  {
         const type = (() => {
             switch (code) {
                 case 400:
-                    return AppwriteException.USER_OAUTH2_BAD_REQUEST;
+                    return Exception.USER_OAUTH2_BAD_REQUEST;
                 case 401:
-                    return AppwriteException.USER_OAUTH2_UNAUTHORIZED;
+                    return Exception.USER_OAUTH2_UNAUTHORIZED;
                 default:
-                    return AppwriteException.USER_OAUTH2_PROVIDER_ERROR;
+                    return Exception.USER_OAUTH2_PROVIDER_ERROR;
             }
         })();
 
