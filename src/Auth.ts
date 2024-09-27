@@ -1,12 +1,10 @@
+import { Authorization, DateTime, Document, Role, Roles } from '@tuval/core';
 import argon2 from 'argon2';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto-js';
 import scrypt from 'scrypt-js';
 import { v4 as uuidv4 } from 'uuid';
-import { Document } from '../Database/Document';
-import { Role, Roles } from '../Database/Role';
-import { Authorization } from '../Database/Authorization';
-import { DateTime } from '../Database/DateTime';
+
 
 type HashOptions = { [key: string]: any };
 
@@ -225,7 +223,7 @@ export class Auth {
                 // phpass is not directly available in npm, using bcrypt as an alternative
                 return await bcrypt.hash(input, 10);
             case 'scrypt':
-                return new Promise<string>((resolve, reject) => {
+                return new Promise<string>(async (resolve, reject) => {
                     const password = Buffer.from(input);
                     const salt = Buffer.from(options.salt || '');
                     const N = options.N || 16384;
@@ -233,32 +231,33 @@ export class Auth {
                     const p = options.p || 1;
                     const dkLen = options.dkLen || 64;
 
-                    scrypt.scrypt(password, salt, N, r, p, dkLen, (error, progress, key) => {
-                        if (error) {
-                            reject(error);
-                        } else if (key) {
-                            resolve(Buffer.from(key).toString('hex'));
-                        }
-                    });
+                    try {
+                        const key = await scrypt.scrypt(password, salt, N, r, p, dkLen);
+                        resolve(Buffer.from(key).toString('hex'));
+                    } catch (error) {
+                        reject(error);
+                    }
                 });
+
             case 'scryptMod':
+
                 // Assuming scryptMod is a modified version, using scrypt-js as well
-                return new Promise<string>((resolve, reject) => {
+                return new Promise<string>(async (resolve, reject) => {
                     const password = Buffer.from(input);
                     const salt = Buffer.from(options.salt || '');
                     const N = options.N || 16384;
                     const r = options.r || 8;
                     const p = options.p || 1;
                     const dkLen = options.dkLen || 64;
-
-                    scrypt.scrypt(password, salt, N, r, p, dkLen, (error, progress, key) => {
-                        if (error) {
-                            reject(error);
-                        } else if (key) {
-                            resolve(Buffer.from(key).toString('hex'));
-                        }
-                    });
+                    try {
+                        const key = await scrypt.scrypt(password, salt, N, r, p, dkLen);
+                        resolve(Buffer.from(key).toString('hex'));
+                    }
+                    catch (error) {
+                        reject(error);
+                    }
                 });
+
             default:
                 throw new Error(`Hashing algorithm '${algo}' is not supported.`);
         }
@@ -369,12 +368,9 @@ export class Auth {
 
         for (const token of tokens) {
             if (
-                token.isSet('secret') &&
-                token.isSet('expire') &&
-                token.isSet('type') &&
-                (type === null || token.getAttribute('type') === type) &&
-                token.getAttribute('secret') === hashedSecret &&
-                DateTime.formatTz(token.getAttribute('expire')) >= DateTime.formatTz(DateTime.now())
+                token?.getAttribute('secret') === hashedSecret &&
+                //@ts-ignore
+                DateTime.formatTz(token?.getAttribute('expire')) >= DateTime.formatTz(DateTime.now())
             ) {
                 return token;
             }
@@ -399,6 +395,7 @@ export class Auth {
                 session.isSet('secret') &&
                 session.isSet('provider') &&
                 session.getAttribute('secret') === hashedSecret &&
+                //@ts-ignore
                 DateTime.formatTz(new Date(session.getAttribute('expire'))) >= DateTime.formatTz(DateTime.now())
             ) {
                 return session.getId();
@@ -417,8 +414,8 @@ export class Auth {
      */
     public static isPrivilegedUser(roles: string[]): boolean {
         return roles.includes(Auth.USER_ROLE_OWNER) ||
-               roles.includes(Auth.USER_ROLE_DEVELOPER) ||
-               roles.includes(Auth.USER_ROLE_ADMIN);
+            roles.includes(Auth.USER_ROLE_DEVELOPER) ||
+            roles.includes(Auth.USER_ROLE_ADMIN);
     }
 
     /**
