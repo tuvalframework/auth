@@ -1,7 +1,7 @@
 import { totp } from 'otplib';
 import { Auth } from '../Auth';
 
-abstract class Type {
+export abstract class Type {
     protected instance: ReturnType<typeof totp.create>;
 
     public static readonly TOTP = 'totp';
