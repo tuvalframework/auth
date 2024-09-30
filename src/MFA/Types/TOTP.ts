@@ -1,10 +1,7 @@
 import { totp } from 'otplib';
+import { Document } from '@tuval/core'
 
-// Define the type of user document
-interface Document {
-    attributes: Record<string, any>;
-    getAttribute(key: string, defaultValue?: any): any;
-}
+
 
 export class TOTP {
     private instance: any;
