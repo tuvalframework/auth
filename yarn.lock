@@ -696,10 +696,10 @@
     pako "^2.1.0"
     validator "^13.12.0"
 
-"@tuval/core@^2.0.5":
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/@tuval/core/-/core-2.0.5.tgz#c3a706a3f06c2b559539e454c9c2cb4ac9902dec"
-  integrity sha512-rQahP+TL7PKRcXyu6TQT0s171lJrrcwjYdu+e7WpHX5kgEdv9vnF7UIow1UsTBP2BemlG3i+UrOydJGKbKBp0w==
+"@tuval/core@^2.0.7":
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/@tuval/core/-/core-2.0.7.tgz#8972aaaf173ebdc454a421aa2b166b18449096c4"
+  integrity sha512-ddv+5qX4RtA0LQmzOTYh84OBYebrdhiWXEvOnzgxbhScpM9SSL3RExgHacayEN6BDRbm5gCoTTuJEjoV9b3X0w==
   dependencies:
     "@tuval/cache" "^1.0.2"
     diskusage "^1.2.0"
