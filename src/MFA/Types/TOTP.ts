@@ -1,12 +1,14 @@
 import { totp } from 'otplib';
 import { Document } from '@tuval/core'
+import { Type } from '../Type';
 
 
 
-export class TOTP {
-    private instance: any;
+export class TOTP extends Type{
+    protected instance: any;
 
     constructor(secret?: string | null) {
+        super();
         this.instance = totp;
         this.instance.options = { step: 30 }; // Example of options, you can configure as needed
         if (secret) {
